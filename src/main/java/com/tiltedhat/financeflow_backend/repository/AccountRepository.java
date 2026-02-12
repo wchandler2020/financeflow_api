@@ -11,9 +11,9 @@ import java.util.Optional;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
     List<Account> findByUserId(Long userId);
-    List<Account> findUserIdAndType(Long userId, AccountType type);
+    List<Account> findByUserIdAndType(Long userId, AccountType type);
     //Find a specific account belonging to a user
-    Optional<Account> findByIdAndUserId(Long id, AccountType type);
+    Optional<Account> findByIdAndUserId(Long id, Long userId);
     // Check if user has an account with this name
     boolean existsByUserIdAndName(Long userId,  String name);
     // Calculate total balance across all accounts for a user
@@ -21,6 +21,6 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     BigDecimal getTotalBalanceByUserId(Long userId);
     // Get total balance by account type(example: total in all checking accounts)
     @Query("SELECT SUM(a.balance) FROM Account a WHERE a.user.id = :userid AND a.user.type = :type")
-    BigDecimal getTotalBalanceByUserIdAndUserType(Long userid, AccountType type);
+    BigDecimal getTotalBalanceByUserIdAndType(Long userid, AccountType type);
 
 }
