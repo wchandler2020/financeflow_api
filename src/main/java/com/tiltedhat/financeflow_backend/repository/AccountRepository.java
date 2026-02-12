@@ -20,7 +20,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query("SELECT SUM(a.balance) FROM Account a WHERE a.user.id = :userId")
     BigDecimal getTotalBalanceByUserId(Long userId);
     // Get total balance by account type(example: total in all checking accounts)
-    @Query("SELECT SUM(a.balance) FROM Account a WHERE a.user.id = :userid AND a.user.type = :type")
+    @Query("SELECT SUM(a.balance) FROM Account a WHERE a.user.id = :userid AND a.type = :type")
     BigDecimal getTotalBalanceByUserIdAndType(Long userid, AccountType type);
 
 }
