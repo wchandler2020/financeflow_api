@@ -1,6 +1,5 @@
-package com.tiltedhat.financeflow_backend.config;
+package com.tiltedhat.financeflow_backend.security;
 
-import com.tiltedhat.financeflow_backend.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthFilter;  // We need to create this!
+    private final JwtAuthenticationFilter jwtAuthFilter;  // ADD THIS
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -35,20 +34,23 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+
+                // ADD THIS (stateless sessions for JWT)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .authorizeHttpRequests(auth -> auth
-                        // Public endpoints (no auth required)
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
-                        // All other endpoints require authentication
+                .authorizeHttpRequests(auth -> auth
+                        // Public endpoints
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // CHANGE THIS from permitAll() to authenticated()
                         .anyRequest().authenticated()
                 )
-                // Add JWT filter before Spring Security's authentication filter
+
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 }
+
