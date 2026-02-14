@@ -69,4 +69,18 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Object[]> getSpendingByCategory(@Param("user") User user);
 
     Long countByUser(User user);
+
+    // Calculate total spending for a category in a specific month/year
+    @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t " +
+            "WHERE t.user = :user " +
+            "AND t.category.id = :categoryId " +
+            "AND t.type = 'DEBIT' " +
+            "AND MONTH(t.transactionDate) = :month " +
+            "AND YEAR(t.transactionDate) = :year")
+    BigDecimal calculateSpendingForCategoryInMonth(
+            @Param("user") User user,
+            @Param("categoryId") Long categoryId,
+            @Param("month") Integer month,
+            @Param("year") Integer year
+    );
 }

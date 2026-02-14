@@ -93,6 +93,7 @@ public class AuthService {
         //Genetate token
 
         String token = jwtUtil.generateToken(user);
+        System.out.println("FULLNAME: " + user.getFullName());
 
         return new AuthResponse(
                 token,

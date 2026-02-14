@@ -18,6 +18,6 @@ public class AuthResponse {
         this.id = id;
         this.email = email;
         this.username = username;
-        this.fullname = fullname;
+        this.fullname = fullName;
     }
 }
