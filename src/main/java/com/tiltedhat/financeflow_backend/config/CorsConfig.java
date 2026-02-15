@@ -1,5 +1,6 @@
 package com.tiltedhat.financeflow_backend.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -11,23 +12,18 @@ import java.util.Arrays;
 @Configuration
 public class CorsConfig {
 
+    @Value("${cors.allowed.origins}")
+    private String allowedOrigins;
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Allow requests from React frontend
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
-
-        // Allow all HTTP methods
+        // Split comma-separated origins
+        configuration.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-        // Allow all headers
         configuration.setAllowedHeaders(Arrays.asList("*"));
-
-        // Allow credentials (cookies, authorization headers)
         configuration.setAllowCredentials(true);
-
-        // How long the browser should cache preflight request results (in seconds)
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
