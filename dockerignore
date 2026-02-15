@@ -1,0 +1,14 @@
+**File:** `.dockerignore` (in backend root)
+```
+target/
+.mvn/
+mvnw
+mvnw.cmd
+.git
+.gitignore
+README.md
+.DS_Store
+*.log
+.idea/
+*.iml
+node_modules/
