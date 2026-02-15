@@ -83,4 +83,50 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             @Param("month") Integer month,
             @Param("year") Integer year
     );
+
+    // Get top spending months
+    @Query("SELECT " +
+            "YEAR(t.transactionDate) as year, " +
+            "MONTH(t.transactionDate) as month, " +
+            "SUM(t.amount) as total " +
+            "FROM Transaction t " +
+            "WHERE t.user = :user " +
+            "AND t.type = 'DEBIT' " +
+            "GROUP BY YEAR(t.transactionDate), MONTH(t.transactionDate) " +
+            "ORDER BY SUM(t.amount) DESC")
+    List<Object[]> getTopSpendingMonths(@Param("user") User user);
+
+    // Get category spending over time
+    @Query("SELECT " +
+            "YEAR(t.transactionDate) as year, " +
+            "MONTH(t.transactionDate) as month, " +
+            "t.category.id as categoryId, " +
+            "t.category.name as categoryName, " +
+            "SUM(t.amount) as total " +
+            "FROM Transaction t " +
+            "WHERE t.user = :user " +
+            "AND t.type = 'DEBIT' " +
+            "AND t.transactionDate >= :startDate " +
+            "GROUP BY YEAR(t.transactionDate), MONTH(t.transactionDate), t.category.id, t.category.name " +
+            "ORDER BY YEAR(t.transactionDate), MONTH(t.transactionDate), SUM(t.amount) DESC")
+    List<Object[]> getCategorySpendingOverTime(
+            @Param("user") User user,
+            @Param("startDate") LocalDate startDate
+    );
+
+    // Get monthly spending trends (last N months)
+    @Query("SELECT " +
+            "YEAR(t.transactionDate) as year, " +
+            "MONTH(t.transactionDate) as month, " +
+            "SUM(CASE WHEN t.type = 'CREDIT' THEN t.amount ELSE 0 END) as income, " +
+            "SUM(CASE WHEN t.type = 'DEBIT' THEN t.amount ELSE 0 END) as expenses " +
+            "FROM Transaction t " +
+            "WHERE t.user = :user " +
+            "AND t.transactionDate >= :startDate " +
+            "GROUP BY YEAR(t.transactionDate), MONTH(t.transactionDate) " +
+            "ORDER BY YEAR(t.transactionDate), MONTH(t.transactionDate)")
+    List<Object[]> getMonthlyTrends(
+            @Param("user") User user,
+            @Param("startDate") LocalDate startDate
+    );
 }

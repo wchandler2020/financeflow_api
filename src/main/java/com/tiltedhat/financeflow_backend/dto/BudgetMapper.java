@@ -21,13 +21,21 @@ public class BudgetMapper {
     public BudgetResponse toResponse(Budget budget, BigDecimal spent){
         BigDecimal remaining = budget.getAmount().subtract(spent);
 
-        Double percentageUsed = 0.0;
-        if(remaining.compareTo(BigDecimal.ZERO) <= 0){
-            percentageUsed = spent
-                    .divide(budget.getAmount(), 4, RoundingMode.HALF_UP)
-                    .multiply(BigDecimal.valueOf(100))
-                    .doubleValue();
+        // Calculate percentage - use double arithmetic for simplicity
+        double percentageUsed = 0.0;
+        if (budget.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+            // Convert to double first, then calculate
+            double spentDouble = spent.doubleValue();
+            double amountDouble = budget.getAmount().doubleValue();
+            percentageUsed = (spentDouble / amountDouble) * 100.0;
         }
+
+        // Debug logging
+        System.out.println("Budget: " + budget.getCategory().getName());
+        System.out.println("Amount: " + budget.getAmount());
+        System.out.println("Spent: " + spent);
+        System.out.println("Percentage: " + percentageUsed + "%");
+        System.out.println("---");
 
         return new BudgetResponse(
                 budget.getId(),
