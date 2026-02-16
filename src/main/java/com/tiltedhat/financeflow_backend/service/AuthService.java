@@ -29,6 +29,7 @@ public class AuthService {
     private final UserMapper userMapper;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
+    private final EmailService emailService;
 
 //  1.Check if email exists
 //  2. Create user with hashed password
@@ -66,8 +67,8 @@ public class AuthService {
         //save the user
         userRepository.save(user);
 
-        //TODO: send email verification email
-        // emailService.sendVerificationEmail(user.getEmail(), token)
+        // send email verification email
+        emailService.sendVerificationEmail(user.getEmail(), token);
 
         return "Registration successful. Please check your email to verify your email address.";
     }
@@ -106,29 +107,21 @@ public class AuthService {
 
     @Transactional
     public String verifyEmail(String token) {
-        User user  = userRepository.findByVerificationToken(token)
+        User user = userRepository.findByVerificationToken(token)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        //Check if token is expired
-        if(user.isVerificationTokenExpired()){
+
+        if (user.isVerificationTokenExpired()) {
             throw new RuntimeException("Verification token is expired");
         }
 
-        // verify email
         user.setEmailVerified(true);
         user.setVerificationToken(null);
         user.setTokenExpiredAt(null);
+        user.setTokenVerifiedAt(LocalDateTime.now());
 
-        //Save user
         userRepository.save(user);
         return "Email verified successfully, you can now log in.";
     }
-
-    /**
-     * 1. find yser by email
-     * 2. chewck if already verified
-     * 3. Gernerate new token
-     * 4. Send new verification email
-     * */
 
     @Transactional
     public String resendVerificationEmail(String email) {
@@ -149,7 +142,7 @@ public class AuthService {
         userRepository.save(user);
 
         // TODO: Send Verfication email
-        // TODO: emailService.sendVerificationEmail(user.getEmail(), token)
+        emailService.sendVerificationEmail(user.getEmail(), token);
         return "Verification email sent, please check your inbox.";
     }
 
