@@ -62,7 +62,7 @@ public class AuthService {
         String token = UUID.randomUUID().toString();
         user.setVerificationToken(token);
         user.setTokenExpiredAt(LocalDateTime.now().plusHours(24)); // this will set the token expiration
-        user.setEmailVerified(false);
+        user.setEmailVerified(true);
 
         //save the user
         userRepository.save(user);
