@@ -29,6 +29,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     // Find by category
     List<Transaction> findByCategoryOrderByTransactionDateDesc(Category category);
 
+    List<Transaction> findTop10ByUserOrderByTransactionDateDesc(User user);
+
     // Find by date range
     @Query("SELECT t FROM Transaction t WHERE t.user = :user " +
             "AND t.transactionDate BETWEEN :startDate AND :endDate " +
