@@ -39,38 +39,26 @@ public class AuthService {
 
     @Transactional
     public String register(RegisterRequest request) {
-        //Check if email already exists
         if(userRepository.existsByEmail(request.getEmail())){
             throw new RuntimeException("Email is already in use");
         }
 
-        //Check if the username already exists
         if(userRepository.existsByUsername(request.getUsername())){
             throw new RuntimeException("Username is already in use");
         }
 
-        //Convert DTO to Entity
         User user = userMapper.toEntity(request);
-
-        //Hash password
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
-        //Set Default Role
         user.setRole(Role.USER);
 
-        //Generate verification token
-        String token = UUID.randomUUID().toString();
-        user.setVerificationToken(token);
-        user.setTokenExpiredAt(LocalDateTime.now().plusHours(24)); // this will set the token expiration
+        // Auto-verify for demo purposes
         user.setEmailVerified(true);
+        user.setVerificationToken(null);
+        user.setTokenExpiredAt(null);
 
-        //save the user
         userRepository.save(user);
 
-        // send email verification email
-        emailService.sendVerificationEmail(user.getEmail(), token);
-
-        return "Registration successful. Please check your email to verify your email address.";
+        return "Registration successful! You can now log in.";
     }
 
     @Transactional
