@@ -48,11 +48,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-        <!-- Add Mailtrap Java SDK -->
+        <!-- Add Spring Mail -->
         <dependency>
-            <groupId>io.mailtrap</groupId>
-            <artifactId>mailtrap-java</artifactId>
-            <version>1.0.0</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
         <dependency>
